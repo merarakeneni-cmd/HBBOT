@@ -3,219 +3,79 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>HRBOT - Tapha Qumaaraa</title>
+    <title>HRBOT BETTING</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #1e1e24;
-            color: #ffffff;
-            text-align: center;
-            padding: 20px;
-            margin: 0;
-        }
-        .container {
-            background: #2b2b36;
-            border-radius: 20px;
-            padding: 25px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            max-width: 400px;
-            margin: auto;
-            border: 1px solid #3a3a48;
-        }
-        h1 { color: #fbc02d; font-size: 24px; margin-bottom: 5px; text-transform: uppercase; }
-        .tagline { color: #aaaaaa; font-size: 13px; font-style: italic; margin-bottom: 20px; }
-        
-        /* Kutaa Baalaansii */
-        .balance-board {
-            background: #111115;
-            border-radius: 15px;
-            padding: 15px;
-            margin-bottom: 20px;
-            border: 1px solid #444;
-        }
-        .balance-amount { font-size: 28px; font-weight: bold; color: #4caf50; }
-        
-        /* Kutaa Taphaa */
-        input {
-            width: 80%;
-            padding: 15px;
-            margin: 10px 0;
-            border: none;
-            border-radius: 10px;
-            font-size: 18px;
-            text-align: center;
-            background: #3a3a48;
-            color: white;
-            outline: none;
-        }
-        input::placeholder { color: #888; }
-        
-        .btn-group {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 15px;
-            gap: 10px;
-        }
-        .btn {
-            flex: 1;
-            padding: 15px;
-            border: none;
-            border-radius: 10px;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-            color: white;
-            transition: 0.2s;
-        }
-        .btn-low { background-color: #e53935; } /* Diimaa */
-        .btn-high { background-color: #1e88e5; } /* Cuquliisa */
-        .btn:active { transform: scale(0.95); }
-        
-        /* Karkaarroo (Dice) */
-        .dice-box {
-            font-size: 60px;
-            margin: 20px 0;
-            min-height: 70px;
-            animation: none;
-        }
-        @keyframes shake {
-            0% { transform: rotate(0deg); }
-            25% { transform: rotate(15deg); }
-            50% { transform: rotate(0eg); }
-            75% { transform: rotate(-15deg); }
-            100% { transform: rotate(0deg); }
-        }
-        .rolling { animation: shake 0.5s infinite; }
-        
-        .footer {
-            margin-top: 25px;
-            font-size: 11px;
-            color: #666;
-        }
-        
-        /* Fuula Kaffaltii */
-        #game-section { display: none; }
+        body { font-family: sans-serif; background: #1a1a1d; color: white; text-align: center; margin: 0; padding: 20px; }
+        .card { background: #25252b; padding: 20px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
+        h1 { color: #fbc02d; margin-bottom: 10px; }
+        .balance-box { background: #000; padding: 15px; border-radius: 10px; margin: 20px 0; border: 1px solid #444; }
+        .amt { font-size: 30px; color: #4caf50; font-weight: bold; }
+        input { width: 80%; padding: 12px; margin: 10px 0; border-radius: 8px; border: none; font-size: 16px; }
+        .btn { width: 100%; padding: 15px; border: none; border-radius: 10px; font-size: 18px; font-weight: bold; cursor: pointer; margin-top: 10px; }
+        .btn-play { background: #2481cc; color: white; }
+        .btn-bet { background: #e53935; color: white; flex: 1; margin: 5px; }
+        .btn-high { background: #1e88e5; }
+        .dice { font-size: 70px; margin: 20px; }
     </style>
 </head>
 <body>
 
-<!-- Fuula Kaffaltii (Deposit) -->
-<div class="container" id="deposit-section">
-    <h1>🚀 HRBOT QUMAARAA</h1>
-    <div class="tagline">"Dhaloota Harka Hin Laanne"</div>
-    <p>Tapha eegaluuf dura qarshii galchadhaa.</p>
-    <input type="number" id="deposit-amount" placeholder="Hamma galchitan (ETB)">
-    <button class="btn btn-high" style="width: 100%; margin-top: 15px;" onclick="makeDeposit()">Telebirr-iin Galchi</button>
-</div>
-
-<!-- Fuula Taphaa (Game) -->
-<div class="container" id="game-section">
-    <h1>🎲 TAPHA KARKAARROO</h1>
-    
-    <div class="balance-board">
+<div class="card" id="main-ui">
+    <h1>🚀 HRBOT BET</h1>
+    <div class="balance-box">
         <div>Baalaansii Kee</div>
-        <div class="balance-amount"><span id="balance-display">0</span> ETB</div>
-    </div>
-    
-    <div class="dice-box" id="dice">🎲</div>
-    <div id="result-text" style="height: 20px; color: #fbc02d; font-weight: bold; margin-bottom: 10px;"></div>
-
-    <input type="number" id="bet-amount" placeholder="Qarshii Qabsiisu (ETB)">
-    
-    <div class="btn-group">
-        <button class="btn btn-low" onclick="playGame('low')">XIQQAA (1-3)<br><small>x2</small></button>
-        <button class="btn btn-high" onclick="playGame('high')">GUDDAA (4-6)<br><small>x2</small></button>
+        <div class="amt"><span id="bal">0</span> ETB</div>
     </div>
 
-    <div class="footer">
-        &copy; 2026 HIREE General Trading PLC<br>
-        Qopheessaan: Merera Tesfaye Keneni
+    <div id="deposit-ui">
+        <p>Tapha eegaluuf dura qarshii galchaa</p>
+        <input type="number" id="dep-amt" placeholder="Hamma (ETB)">
+        <button class="btn btn-play" onclick="deposit()">Telebirr-iin Galchi</button>
+    </div>
+
+    <div id="game-ui" style="display:none;">
+        <div class="dice" id="dice-icon">🎲</div>
+        <input type="number" id="bet-amt" placeholder="Qarshii Qabsiisu">
+        <div style="display:flex;">
+            <button class="btn btn-bet" onclick="play('low')">XIQQAA (1-3)</button>
+            <button class="btn btn-bet btn-high" onclick="play('high')">GUDDAA (4-6)</button>
+        </div>
     </div>
 </div>
 
 <script>
     let tg = window.Telegram.WebApp;
     tg.expand();
-    
-    let currentBalance = 0;
+    let balance = 0;
 
-    function makeDeposit() {
-        let amount = parseInt(document.getElementById('deposit-amount').value);
-        if(!amount || amount < 10) {
-            tg.showAlert("Maaloo yoo xiqqaate qarshii 10 galchaa.");
-            return;
-        }
-        
-        tg.showConfirm("Qarshii " + amount + " galchuuf mirkaneessaa. (Kaffaltiin eega raawwatee booda taphni ni eegala)", (ok) => {
-            if (ok) {
-                // Asitti kalleattiingara taphaatti ceena
-                currentBalance = amount;
-                document.getElementById('balance-display').innerText = currentBalance;
-                document.getElementById('deposit-section').style.display = 'none';
-                document.getElementById('game-section').style.display = 'block';
-            }
-        });
+    function deposit() {
+        let a = document.getElementById('dep-amt').value;
+        if(a < 10) { tg.showAlert("Minimum 10 ETB galchaa"); return; }
+        balance = parseInt(a);
+        document.getElementById('bal').innerText = balance;
+        document.getElementById('deposit-ui').style.display = 'none';
+        document.getElementById('game-ui').style.display = 'block';
     }
 
-    function playGame(choice) {
-        let betAmount = parseInt(document.getElementById('bet-amount').value);
-        let resultText = document.getElementById('result-text');
-        let diceBox = document.getElementById('dice');
+    function play(choice) {
+        let b = parseInt(document.getElementById('bet-amt').value);
+        if(!b || b > balance) { tg.showAlert("Baalaansiin kee hin ga'u!"); return; }
         
-        if(!betAmount || betAmount <= 0) {
-            resultText.innerText = "Maaloo qarshii qabsiisaa!";
-            return;
+        let res = Math.floor(Math.random() * 6) + 1;
+        let icons = ['','⚀','⚁','⚂','⚃','⚄','⚅'];
+        document.getElementById('dice-icon').innerText = icons[res];
+
+        let win = (choice === 'low' && res <= 3) || (choice === 'high' && res >= 4);
+        if(win) {
+            balance += b;
+            tg.showAlert("🎉 Mo'atteetta! +" + b);
+        } else {
+            balance -= b;
+            tg.showAlert("😢 Nyaatamte! -" + b);
         }
-        if(betAmount > currentBalance) {
-            resultText.innerText = "Baalaansiin kee hin ga'u!";
-            return;
-        }
-
-        // Tapha eegaluu (Animation)
-        diceBox.classList.add('rolling');
-        resultText.innerText = "Karkaarroon naanna'aa jira...";
-        
-        // Button tuquu dhorkuu
-        let buttons = document.querySelectorAll('.btn-group .btn');
-        buttons.forEach(b => b.disabled = true);
-
-        setTimeout(() => {
-            diceBox.classList.remove('rolling');
-            
-            // Lakkoofsa 1 hanga 6 fiduu
-            let diceResult = Math.floor(Math.random() * 6) + 1;
-            let diceFaces = ['🎲', '⚀', '⚁', '⚂', '⚃', '⚄', '⚅'];
-            diceBox.innerText = diceFaces[diceResult];
-
-            let isWin = false;
-            if (choice === 'low' && diceResult <= 3) isWin = true;
-            if (choice === 'high' && diceResult >= 4) isWin = true;
-
-            if (isWin) {
-                currentBalance += betAmount; // Dachaa argata (qabsiisa ofii + bu'aa)
-                resultText.innerText = "🎉 MO'ATTEETTA! Lakkoofsi " + diceResult + " ba'e.";
-                resultText.style.color = "#4caf50";
-            } else {
-                currentBalance -= betAmount; // Ni nyaatama
-                resultText.innerText = "😢 NYAATAMTE! Lakkoofsi " + diceResult + " ba'e.";
-                resultText.style.color = "#e53935";
-            }
-
-            document.getElementById('balance-display').innerText = currentBalance;
-            buttons.forEach(b => b.disabled = false);
-
-            if(currentBalance <= 0) {
-                setTimeout(() => {
-                    tg.showAlert("Qarshiin kee dhumateera! Maaloo deebisii galchuu.");
-                    document.getElementById('game-section').style.display = 'none';
-                    document.getElementById('deposit-section').style.display = 'block';
-                }, 1500);
-            }
-
-        }, 1000); // Sekoondii 1 booda bu'aa agarsiisa
+        document.getElementById('bal').innerText = balance;
     }
 </script>
-
 </body>
 </html>
