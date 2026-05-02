@@ -6,76 +6,102 @@
     <title>HRBOT BETTING</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        body { font-family: sans-serif; background: #1a1a1d; color: white; text-align: center; margin: 0; padding: 20px; }
-        .card { background: #25252b; padding: 20px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
-        h1 { color: #fbc02d; margin-bottom: 10px; }
-        .balance-box { background: #000; padding: 15px; border-radius: 10px; margin: 20px 0; border: 1px solid #444; }
-        .amt { font-size: 30px; color: #4caf50; font-weight: bold; }
-        input { width: 80%; padding: 12px; margin: 10px 0; border-radius: 8px; border: none; font-size: 16px; }
-        .btn { width: 100%; padding: 15px; border: none; border-radius: 10px; font-size: 18px; font-weight: bold; cursor: pointer; margin-top: 10px; }
-        .btn-play { background: #2481cc; color: white; }
-        .btn-bet { background: #e53935; color: white; flex: 1; margin: 5px; }
-        .btn-high { background: #1e88e5; }
-        .dice { font-size: 70px; margin: 20px; }
+        body { font-family: 'Segoe UI', Tahoma, sans-serif; background-color: #0f3460; color: white; text-align: center; margin: 0; padding: 20px; }
+        .container { background: #16213e; border-radius: 20px; padding: 25px; border: 2px solid #e94560; max-width: 400px; margin: auto; }
+        .slot-box { display: flex; justify-content: center; background: white; padding: 15px; border-radius: 15px; margin: 20px 0; box-shadow: inset 0 0 10px rgba(0,0,0,0.5); }
+        .slot { font-size: 50px; width: 80px; color: black; }
+        input { width: 85%; padding: 12px; margin: 15px 0; border-radius: 10px; border: none; font-size: 18px; text-align: center; color: #333; }
+        .btn { width: 100%; padding: 15px; border-radius: 10px; border: none; font-size: 18px; font-weight: bold; cursor: pointer; margin-bottom: 10px; transition: 0.2s; }
+        .btn-play { background: #e94560; color: white; }
+        .btn-play:active { background: #c0392b; transform: scale(0.98); }
+        .btn-tele { background: #0056b3; color: white; }
+        .info-text { background: #1a1a2e; padding: 15px; border-radius: 10px; font-size: 14px; color: #4dfd63; border: 1px solid #4dfd63; margin-top: 15px; line-height: 1.5; }
+        #status { font-size: 22px; font-weight: bold; margin: 10px 0; min-height: 30px; color: #f1c40f; }
     </style>
 </head>
 <body>
 
-<div class="card" id="main-ui">
-    <h1>🚀 HRBOT BET</h1>
-    <div class="balance-box">
-        <div>Baalaansii Kee</div>
-        <div class="amt"><span id="bal">0</span> ETB</div>
+<div class="container">
+    <h1 style="color: #e94560; margin: 0;">🎰 HRBOT</h1>
+    <p style="font-size: 14px; opacity: 0.8;">"Dhaloota Harka Hin Laanne"</p>
+
+    <div class="slot-box">
+        <div id="s1">❓</div>
+        <div id="s2">❓</div>
+        <div id="s3">❓</div>
     </div>
 
-    <div id="deposit-ui">
-        <p>Tapha eegaluuf dura qarshii galchaa</p>
-        <input type="number" id="dep-amt" placeholder="Hamma (ETB)">
-        <button class="btn btn-play" onclick="deposit()">Telebirr-iin Galchi</button>
-    </div>
+    <div id="status">Qarshii qabsiisaa!</div>
 
-    <div id="game-ui" style="display:none;">
-        <div class="dice" id="dice-icon">🎲</div>
-        <input type="number" id="bet-amt" placeholder="Qarshii Qabsiisu">
-        <div style="display:flex;">
-            <button class="btn btn-bet" onclick="play('low')">XIQQAA (1-3)</button>
-            <button class="btn btn-bet btn-high" onclick="play('high')">GUDDAA (4-6)</button>
-        </div>
+    <input type="number" id="betAmt" placeholder="Hamma Qarshii (ETB)" min="10">
+
+    <button class="btn btn-play" onclick="startSpin()">TAPHA JALQABI</button>
+    <button class="btn btn-tele" onclick="payTele()">TELEBIRR-IIN KAFFALI</button>
+
+    <div class="info-text">
+        📢 <b>Hubachiisa:</b><br>
+        Kaffaltii raawwattanii lakkoofsa <b>0902348040</b> irratti <b>Screenshot</b> nuuf ergaa.
     </div>
 </div>
 
 <script>
     let tg = window.Telegram.WebApp;
     tg.expand();
-    let balance = 0;
 
-    function deposit() {
-        let a = document.getElementById('dep-amt').value;
-        if(a < 10) { tg.showAlert("Minimum 10 ETB galchaa"); return; }
-        balance = parseInt(a);
-        document.getElementById('bal').innerText = balance;
-        document.getElementById('deposit-ui').style.display = 'none';
-        document.getElementById('game-ui').style.display = 'block';
+    const items = ['🍎', '💎', '⭐', '🔔', '7️⃣'];
+
+    function startSpin() {
+        let amt = document.getElementById('betAmt').value;
+        if(amt < 10 || amt == "") {
+            tg.showAlert("Maaloo, dura qarshii 10 fi isaa ol qabsiisaa!");
+            return;
+        }
+
+        document.getElementById('status').innerText = "Naanna'aa jira...";
+        let count = 0;
+        let timer = setInterval(() => {
+            document.getElementById('s1').innerText = items[Math.floor(Math.random()*5)];
+            document.getElementById('s2').innerText = items[Math.floor(Math.random()*5)];
+            document.getElementById('s3').innerText = items[Math.floor(Math.random()*5)];
+            count++;
+            if(count > 12) {
+                clearInterval(timer);
+                checkWin(amt);
+            }
+        }, 100);
     }
 
-    function play(choice) {
-        let b = parseInt(document.getElementById('bet-amt').value);
-        if(!b || b > balance) { tg.showAlert("Baalaansiin kee hin ga'u!"); return; }
-        
-        let res = Math.floor(Math.random() * 6) + 1;
-        let icons = ['','⚀','⚁','⚂','⚃','⚄','⚅'];
-        document.getElementById('dice-icon').innerText = icons[res];
+    function checkWin(amt) {
+        let a = document.getElementById('s1').innerText;
+        let b = document.getElementById('s2').innerText;
+        let c = document.getElementById('s3').innerText;
 
-        let win = (choice === 'low' && res <= 3) || (choice === 'high' && res >= 4);
-        if(win) {
-            balance += b;
-            tg.showAlert("🎉 Mo'atteetta! +" + b);
+        if(a === b && b === c) {
+            document.getElementById('status').innerText = "🎉 MOOTEETTA!";
+            document.getElementById('status').style.color = "#4dfd63";
+            tg.showAlert("Gammachuu Guddaa! Mooteetta. Screenshot kaasuun 0902348040 irratti nuuf ergi.");
         } else {
-            balance -= b;
-            tg.showAlert("😢 Nyaatamte! -" + b);
+            document.getElementById('status').innerText = "❌ HIN MOONNE";
+            document.getElementById('status').style.color = "#ff4d4d";
+            setTimeout(() => { 
+                document.getElementById('status').innerText = "Irra deebi'ii yaali";
+                document.getElementById('status').style.color = "#f1c40f"; 
+            }, 2000);
         }
-        document.getElementById('bal').innerText = balance;
+    }
+
+    function payTele() {
+        tg.showPopup({
+            title: 'Kaffaltii Telebirr',
+            message: 'Lakkoofsa 0902348040 irratti kaffaltii raawwachuuf gara Telebirr si geessu?',
+            buttons: [{id: 'ok', type: 'default', text: 'Eeyyee'}]
+        }, (id) => {
+            if(id === 'ok') {
+                window.open("https://www.ethiotelecom.et/telebirr/", "_blank");
+            }
+        });
     }
 </script>
+
 </body>
 </html>
