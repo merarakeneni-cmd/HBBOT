@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="or">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>HRBOT - Dhaloota Harka Hin Laanne</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Roboto, sans-serif;
+            background-color: var(--tg-theme-secondary-bg-color, #f0f2f5);
+            color: var(--tg-theme-text-color, #000);
+            text-align: center;
+            padding: 20px;
+            margin: 0;
+        }
+        .container {
+            background: var(--tg-theme-bg-color, white);
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+            max-width: 400px;
+            margin: auto;
+        }
+        h1 { color: #0088cc; margin-bottom: 5px; }
+        .price-box { 
+            font-size: 18px; 
+            margin: 15px 0; 
+            padding: 15px;
+            background: #fff9c4; /* Halluu keelloo qalbii harkisu */
+            border-radius: 12px;
+            border: 1px dashed #fbc02d;
+        }
+        input {
+            width: 85%;
+            padding: 12px;
+            margin: 10px 0;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            font-size: 16px;
+            text-align: center;
+        }
+        .btn {
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            width: 100%;
+            margin-top: 10px;
+        }
+        .btn-tele { background-color: #0056b3; }
+        .instructions {
+            font-size: 13px;
+            color: #666;
+            margin-top: 15px;
+            text-align: left;
+            background: #f9f9f9;
+            padding: 10px;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>🚀 HRBOT</h1>
+    <p><b>Dhaloota Harka Hin Laanne</b></p>
+    
+    <div class="price-box">
+        💰 Qabsiisa: 10 - 500 ETB
+    </div>
+    
+    <input type="number" id="amount" placeholder="Hamma Qarshii (ETB)">
+    
+    <button class="btn btn-tele" onclick="payNow()">Telebirr-iin Kaffali</button>
+
+    <div class="instructions">
+        <b>Akkaataa Kaffaltii:</b><br>
+        1. Hamma kaffaltii olitti barreessi.<br>
+        2. Button Telebirr tuquun kaffali.<br>
+        3. Kaffaltii eerga xumurtee booda <b>Screenshot</b> kaasi.<br>
+        4. Screenshot sana Bot-ii irratti nuuf ergi.
+    </div>
+</div>
+
+<script>
+    let tg = window.Telegram.WebApp;
+    tg.expand();
+
+    function payNow() {
+        let amt = document.getElementById('amount').value;
+        if(amt < 10) {
+            tg.showAlert("Maaloo dura hamma qarshii (ETB 10 ol) galchaa.");
+            return;
+        }
+
+        tg.showPopup({
+            title: 'Kaffaltii Raawwachuuf',
+            message: 'Qarshii ' + amt + ' ETB kaffaluun Screenshot nuuf ergaa.',
+            buttons: [{id: 'ok', type: 'default', text: 'Eeyyee, nan kaffala'}]
+        }, (id) => {
+            if (id === 'ok') {
+                // Liinkii Telebirr kee asitti galchi (Merchant ykn Phone number)
+                window.open("https://www.ethiotelecom.et/telebirr/", "_blank");
+                
+                // Ergaa gabaabaa Bot-itti erguuf
+                tg.sendData("Kaffaltii eegaleera: " + amt + " ETB");
+                tg.close();
+            }
+        });
+    }
+</script>
+
+</body>
+</html>
